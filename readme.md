@@ -93,7 +93,9 @@ python src/main.py --input video.mp4
 ## Pipeline do Projeto
 
 1. **Captura do vídeo**
-   - Descreva o método/fonte (ex: webcam, arquivo .mp4).
+   
+   
+   
 2. **Detecção de movimento**
    - Explique a técnica utilizada (ex: background subtraction, frame differencing).
 3. **Recorte da região de interesse (ROI)**
