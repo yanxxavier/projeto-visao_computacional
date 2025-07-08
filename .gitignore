@@ -1,0 +1,28 @@
+# Ignora a pasta de ambiente virtual (venv)
+venv/
+.venv/
+proj-visao_computacional/
+
+# Ignora arquivos de configuração do VSCode e PyCharm
+.vscode/
+.idea/
+
+# Ignora arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignora arquivos de cache do Jupyter
+.ipynb_checkpoints/
+
+# Ignora arquivos de log
+*.log
+
+# NÃO ignore o requirements.txt!
+# requirements.txt
+
+# Ignora outros arquivos comuns de ambiente
+.env
+.DS_Store
+.gitattributes
