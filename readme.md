@@ -1,133 +1,91 @@
-# Projeto de Visão Computacional 2025.1
+# 🌟 Desenvolvimento do Projeto
 
-Este repositório contém o desenvolvimento do projeto da disciplina **Visão Computacional 2025.1**. O objetivo é construir uma solução modular para detecção, recorte, classificação de objetos em vídeo e notificação ao usuário, utilizando técnicas clássicas de visão computacional.
-
----
-
-## 📑 Sumário
-
-- [Descrição do Projeto](#descrição-do-projeto)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Requisitos](#requisitos)
-- [Instalação](#instalação)
-- [Como Executar](#como-executar)
-- [Pipeline do Projeto](#pipeline-do-projeto)
-- [Resultados e Métricas](#resultados-e-métricas)
-- [Possíveis Extensões](#possíveis-extensões)
-- [Referências](#referências)
+Aqui está meu registro pessoal das etapas, dúvidas, descobertas e soluções durante a jornada do projeto de detecção com YOLOv8.
 
 ---
 
-## Descrição do Projeto
-> O projeto visa detectar movimento em vídeos, recortar regiões de interesse (ROI), classificar o objeto identificado e notificar o usuário via telegram.
+## 🚀 Início
+
+- Comecei com a ideia de montar um detector de pessoas usando YOLOv8, já pensando no Orange Pi pra rodar depois.
+- O projeto foi pensado no meu sogro, que tinha câmeras, mas não conseguia ter esse controle de movimentação na sua rua.
 
 ---
 
-## Estrutura do Projeto
+## 🖼️ Montando o Dataset
 
-```
-projeto-visao_computacional/
-│
-├── src/                 # Códigos-fonte do projeto
-│   ├── captura_video.py
-│   ├── detector_movimento.py
-│   ├── recorte_roi.py
-│   ├── classificador.py
-│   └── notificacao.py
-│
-├── dataset/             # Imagens e vídeos para testes/classificação (se aplicável)
-├── resultados/          # Imagens/vídeos/resultados gerados pelo sistema
-├── requirements.txt     # Dependências do projeto
-├── README.md            # Este arquivo
-└── ...                  # Outros arquivos (config, scripts, etc)
-```
+- Busquei vídeos de monitoramento públicos no [Kitware Data](https://data.kitware.com/) 
+- Usei o Roboflow pra criar as anotações no formato YOLO. Tive algumas dificuldades em rotular dezenas de imagens, mas deu certo.
+- Separei as imagens assim:
+  - **Treino:** 111 imagens
+  - **Validação:** 22 imagens
+  - **Teste:** 6 imagens
+- Na fase inicial, trabalhei com só duas classes: "pessoa" e "carro", mas já penso em aumentar essa pool no futuro.
 
 ---
 
-## Requisitos
+## 🏋️‍♂️ Primeiros Treinos
 
-- Python >= 3.8
-- Bibliotecas:
-  - opencv-python
-  - numpy
-  - scikit-learn
-  - (opcionais: Pillow, matplotlib, requests)
-
-Veja o arquivo `requirements.txt` para detalhes.
+- Testei treinar com o modelo base `yolov8n.pt`, poucas épocas só pra ver como funcionava. Foi um choque de realidade, pois estava muito longe do mínimo desejado, não conseguia identificar NADA nas inferências que estava fazendo.
+- Tentei treinar por mais 50 épocas, melhorou quase nada, mas pelo menos já conseguia ver o resultado nos treinos (validação ainda estava bem longe).
 
 ---
 
-## Instalação
+## 🕵️‍♂️ Caçando Problemas
 
-Clone o repositório e instale as dependências:
-
-```bash
-git clone https://github.com/yanxxavier/projeto-visao_computacional.git
-cd projeto-visao_computacional
-pip install -r requirements.txt
-```
+- Descobri que estava usando um modelo antigo (`train1.pt`) pra fazer inferência, por isso estava ruim.
+- Troquei pro peso mais atual do treinamento (`best.pt`) e já melhorou bastante.
 
 ---
 
-## Como Executar
+## 🔧 Ajustes & Aprendizados
 
-Explique aqui como rodar o pipeline completo ou cada módulo isoladamente.
-
-Exemplo:
-```bash
-python src/captura_video.py --input video.mp4
-python src/detector_movimento.py --input video.mp4
-python src/recorte_roi.py --input video.mp4
-python src/classificador.py --input roi.jpg
-python src/notificacao.py --mensagem "Objeto detectado"
-```
-
-Ou descreva um script principal que integra tudo:
-
-```bash
-python src/main.py --input video.mp4
-```
+- Nada ainda funcionava, tive que voltar ao Roboflow para aumentar meu dataset. Coloquei mais imagens, ainda com foco em pessoas e carros.
+- Num primeiro momento, a mudança não foi tão significativa, mas já conseguia ter resultados na validação.
+- No primeiro dataset, nem usando limiar de 0.5, tinha quaisquer resultados na validação.
+- Tivemos um grande pulo no segundo dataset, consegui começar a identificar pessoas de maneira desejada, com um limiar de 0.3.
+- Ainda está longe do target, mas já fiquei bem feliz.
 
 ---
 
-## Pipeline do Projeto
+## 🗂️ Estrutura do Projeto
 
-1. **Captura do vídeo**
-   
-   
-   
-2. **Detecção de movimento**
-   - Explique a técnica utilizada (ex: background subtraction, frame differencing).
-3. **Recorte da região de interesse (ROI)**
-   - Critérios para recorte e salvamento.
-4. **Classificação**
-   - Método de extração de características e algoritmo de classificação.
-5. **Notificação**
-   - Como o usuário é notificado (print/log, Telegram, e-mail etc.).
-
----
-
-## Resultados e Métricas
-
-- Insira aqui exemplos de resultados obtidos (prints, imagens, vídeos).
-- Apresente métricas de desempenho: acurácia, tempo de processamento, etc.
-- Faça análise crítica dos resultados e possíveis limitações.
+- Estruturei o repositório para facilitar manutenção e reuso.
+- **Estrutura básica:**
+  ```
+  ├── main.ipynb                     # Notebook principal do projeto
+  ├── requirements.txt               # Dependências do projeto
+  ├── data.yaml                      # Configuração do dataset
+  ├── .gitignore                     # Arquivos e pastas ignorados
+  ├── README.md                      # Guia do projeto
+  ├── dataSet/                       # Dataset anotado (não subir no git)
+  ├── runs/                          # Resultados de treinamento (não subir no git)
+  ```
+- **Pipeline:**  
+  1. Coleta e anotação das imagens e vídeos  
+  2. Montagem do dataset e configuração do `data.yaml`  
+  3. Treinamento do modelo com YOLOv8  
+  4. Testes de inferência com imagens/vídeos  
+  5. Validação dos resultados  
+  6. Preparação para deploy no Orange Pi (primeiro com imagens/vídeos, depois webcam)
 
 ---
 
-## Possíveis Extensões
+## 🍊 Foco no Orange Pi
 
-Liste ideias para futuras melhorias, tais como:
-- Uso de modelos de deep learning.
-- Inclusão de múltiplos canais de notificação.
-- Suporte a múltiplas classes de objetos.
-
----
-
-## Referências
-
-Liste artigos, tutoriais, livros e documentação usados no desenvolvimento.
+- Preparei tudo pensando no ARM (Orange Pi) – dependências, comandos de instalação.
+- Decidi: vou testar primeiro só com imagens e vídeos, depois parto pra webcam.
+- Meu intuito é um MVP, o Orange Pi vai dar um grande up para o projeto.
 
 ---
 
-> **Nota:** O código-fonte e os dados devem ficar disponíveis neste repositório, conforme exigência da disciplina.
+## 💬 Conclusão
+
+- Uma das principais coisas que aprendi foi dar importância para o dataset. Uma boa qualidade de dados muitas vezes se torna mais importante que o código ou implementações.
+- Meu projeto só foi andar verdadeiramente quando aumentei o dataset em cerca de 100%.
+- Tive alguns problemas pessoais durante o desenvolvimento que prejudicaram meu desempenho na disciplina. Mas não vou deixar de trabalhar neste projeto, mesmo depois que acabar — quero continuar refinando ele.
+- Essa disciplina e esse projeto me abriram portas para fazer parte de uma bolsa, onde trabalhamos no monitoramento de reservatórios de petróleo usando Machine Learning.
+- Só tenho a agradecer ao professor pela oportunidade desse conhecimento e peço desculpas por não ter aproveitado o quanto podia.
+
+---
+
+✨ Projeto feito com curiosidade, paciência e muita mão na massa!
